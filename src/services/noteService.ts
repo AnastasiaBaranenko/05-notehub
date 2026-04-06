@@ -32,8 +32,8 @@ Authorization: `Bearer ${key}`,
   return results.data;
       }
       
-     export async function deleteNote(id:string){
-      const response = await axios.delete(`${url}/notes/${id}`, {
+     export async function deleteNote(id:string):Promise<Note>{
+      const response = await axios.delete<Note>(`${url}/notes/${id}`, {
         headers: {
 Authorization: `Bearer ${key}`,
   },
