@@ -2,6 +2,10 @@ import css from './NoteForm.module.css';
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useId } from "react";
+import { useMutation } from '@tanstack/react-query';
+import {useQueryClient} from '@tanstack/react-query';
+import type { Note } from '../../types/note';
+import { createNote } from '../../services/noteService';
 
 export interface NoteValues {
   title: string;
@@ -11,7 +15,6 @@ export interface NoteValues {
 
 export interface NoteFormProps {
   onClose: () => void;
-  handleSave: (values:NoteValues) => void;
 }
 
 const Shema = Yup.object().shape({
@@ -26,9 +29,21 @@ const Shema = Yup.object().shape({
   .required("Tag is required"),
 });
 
-export default function NoteForm({ onClose, handleSave }:NoteFormProps){
+export default function NoteForm({ onClose}:NoteFormProps){
   const fieldId = useId();
-  console.log('NoteForm props:', { onClose, handleSave });
+  const queryClient = useQueryClient();
+
+  const mutation =  useMutation<Note, Error, NoteValues>({
+  mutationFn: (noteData) => createNote(noteData),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['notes'] });
+    onClose()
+  },
+  onError: (error) => {
+    console.log(error);
+  }
+})
+
     return(
        <Formik initialValues={{
         title:"",
@@ -36,11 +51,9 @@ export default function NoteForm({ onClose, handleSave }:NoteFormProps){
         tag:"Todo",
         }} 
         validationSchema={Shema}
-        onSubmit={(values, actions) => {
-          handleSave(values);         
-        actions.resetForm();
-        onClose();
-        }}>
+        onSubmit={(values) => {
+          mutation.mutate(values)}}
+        >
           {({ isSubmitting }) => (
     <Form className={css.form}>
   <div className={css.formGroup}>

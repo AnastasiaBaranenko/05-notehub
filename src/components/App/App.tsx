@@ -1,24 +1,19 @@
 import {useEffect, useState} from 'react';
 import css from './App.module.css';
 import{useQuery, keepPreviousData } from '@tanstack/react-query';
-import {useQueryClient} from '@tanstack/react-query';
-import { useMutation } from '@tanstack/react-query';
 import { fetchNotes } from '../../services/noteService';
-import {createNote, deleteNote} from '../../services/noteService';
 import { useDebouncedCallback } from 'use-debounce';
-import type {Note} from '../../types/note';
-import SearcBox from '../SearchBox/SearchBox';
+import SearchBox from '../SearchBox/SearchBox';
 import Pagination from '../Pagination/Pagination'
 import Modal from '../Modal/Modal';
 import NoteForm from '../NoteForm/NoteForm';
 import NoteList from '../NoteList/NoteList';
-import type { NoteValues } from '../NoteForm/NoteForm';
 import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function App(){
-const queryClient = useQueryClient();
+
  const [search, setSearch] = useState('');
  const [page, setPage] = useState(1);
  const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,37 +33,18 @@ const { data, isLoading, isError, isSuccess } = useQuery({
     enabled: true,
     placeholderData: keepPreviousData,
   });
-  
- 	const mutation =  useMutation<Note, Error, NoteValues>({
-  mutationFn: (noteData) => createNote(noteData),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['memos'] });
-    setIsModalOpen(false);
-  },
-  onError: (error) => {
-    console.log(error);
-  }
-})
 
  useEffect(() => {
     if(isSuccess && data?.notes.length === 0 && search !== ''){
 toast.error('No notes found for your request.', {
       id: 'no-notes-found',});
-
  }},[isSuccess, data, search]);
-
-const deleteMutation = useMutation({
-  mutationFn: (id: number) => deleteNote(id),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['memos'] });
-  }});
-console.log("Мій API URL:", import.meta.env.VITE_NOTEHUB_TOK);
 
     return(
         <div className={css.app}>
           <Toaster position="top-right" reverseOrder={false} />
 	<header className={css.toolbar}> 
-		<SearcBox onChange={handleSearch} />
+		<SearchBox onChange={handleSearch} />
         {isLoading && search !== '' && <Loader />}
        {isError && <ErrorMessage/>}
 		  {data && data?.totalPages > 1 && (<Pagination     
@@ -83,17 +59,15 @@ console.log("Мій API URL:", import.meta.env.VITE_NOTEHUB_TOK);
   {isSuccess && data?.notes.length > 0 && (
   <NoteList 
     notes={data.notes} 
-    onDelete={(id) => deleteMutation.mutate(id)}
   />
 )}
+{isModalOpen && 
       <Modal isOpen={isModalOpen} 
       onClose={() => setIsModalOpen(false)}>
         <NoteForm onClose={() => setIsModalOpen(false)}    
-        handleSave={(values) => {
-            mutation.mutate(values)}
-            }            
         />
         </Modal>
+}
         </div>
     );
 }

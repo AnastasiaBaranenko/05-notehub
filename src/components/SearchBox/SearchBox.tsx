@@ -6,7 +6,7 @@ interface SearchBoxProps {
   onChange: (value: string) => void;
 }
 
-export default function SearcBox({onChange}:SearchBoxProps){
+export default function SearchBox({onChange}:SearchBoxProps){
     const [textValue, setTextValue] = useState ('');
 
     const debouncedOnChange = useDebouncedCallback((val) => {

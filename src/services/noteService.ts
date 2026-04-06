@@ -4,7 +4,6 @@ import axios from "axios";
 
 export interface Notes{
 notes: Note[];
-per_page: number;
 totalPages: number;
 }
 
@@ -12,7 +11,7 @@ const key = import.meta.env.VITE_NOTEHUB_TOKEN;
 const url = import.meta.env.VITE_BASE_URL;
 
 export async function fetchNotes(search: string, page: number): Promise<Notes>{
-// try{
+
 const response = await axios.get<Notes>(`${url}/notes`, {
     params: {
         search: search,
@@ -33,7 +32,7 @@ Authorization: `Bearer ${key}`,
   return results.data;
       }
       
-     export async function deleteNote(id:number){
+     export async function deleteNote(id:string){
       await axios.delete(`${url}/notes/${id}`, {
         headers: {
 Authorization: `Bearer ${key}`,
