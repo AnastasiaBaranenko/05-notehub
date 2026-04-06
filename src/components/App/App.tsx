@@ -68,7 +68,7 @@ const deleteMutation = useMutation({
           <Toaster position="top-right" reverseOrder={false} />
 	<header className={css.toolbar}> 
 		<SearcBox onChange={handleSearch} />
-        {isLoading && <Loader />}
+        {isLoading && !data && <Loader />}
        {isError && <ErrorMessage/>}
 		  {data && data.totalPages > 1 && (<Pagination     
     totalPages={data.totalPages} 
