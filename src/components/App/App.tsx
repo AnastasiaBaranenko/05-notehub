@@ -35,7 +35,7 @@ const handleSearch = (newValue:string) => {
 const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ['memos',search, page],
     queryFn: () => fetchNotes(search, page),
-    enabled: search!== '',
+    enabled: true,
     placeholderData: keepPreviousData,
   });
   
@@ -68,7 +68,7 @@ const deleteMutation = useMutation({
           <Toaster position="top-right" reverseOrder={false} />
 	<header className={css.toolbar}> 
 		<SearcBox onChange={handleSearch} />
-        {isLoading && !data && <Loader />}
+        {isLoading && search !== '' && <Loader />}
        {isError && <ErrorMessage/>}
 		  {data && data?.totalPages > 1 && (<Pagination     
     totalPages={data.totalPages} 
@@ -79,7 +79,7 @@ const deleteMutation = useMutation({
       Create note +</button>
   </header>
 
-  {isSuccess && data && (
+  {isSuccess && data?.notes.length > 0 && (
   <NoteList 
     notes={data.notes} 
     onDelete={(id) => deleteMutation.mutate(id)}
