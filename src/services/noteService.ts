@@ -33,10 +33,11 @@ Authorization: `Bearer ${key}`,
       }
       
      export async function deleteNote(id:string){
-      await axios.delete(`${url}/notes/${id}`, {
+      const response = await axios.delete(`${url}/notes/${id}`, {
         headers: {
 Authorization: `Bearer ${key}`,
   },
    });
+   return response.data;
      }
       
