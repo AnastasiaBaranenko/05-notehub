@@ -35,7 +35,7 @@ const handleSearch = (newValue:string) => {
 const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ['memos',search, page],
     queryFn: () => fetchNotes(search, page),
-    enabled: true,
+    enabled: search!== '',
     placeholderData: keepPreviousData,
   });
   
@@ -70,7 +70,7 @@ const deleteMutation = useMutation({
 		<SearcBox onChange={handleSearch} />
         {isLoading && !data && <Loader />}
        {isError && <ErrorMessage/>}
-		  {data && data.totalPages > 1 && (<Pagination     
+		  {data && data?.totalPages > 1 && (<Pagination     
     totalPages={data.totalPages} 
       currentPage={page}
     onPageChange={setPage}/> 
