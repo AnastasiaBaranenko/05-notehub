@@ -62,6 +62,7 @@ const deleteMutation = useMutation({
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['memos'] });
   }});
+console.log("Мій API URL:", import.meta.env.VITE_NOTEHUB_TOK);
 
     return(
         <div className={css.app}>

@@ -9,10 +9,11 @@ totalPages: number;
 }
 
 const key = import.meta.env.VITE_NOTEHUB_TOKEN;
+const url = import.meta.env.VITE_BASE_URL;
 
 export async function fetchNotes(search: string, page: number): Promise<Notes>{
 // try{
-const response = await axios.get<Notes>('https://notehub-public.goit.study/api/notes', {
+const response = await axios.get<Notes>(`${url}/notes`, {
     params: {
         search: search,
         page: page,
@@ -25,7 +26,7 @@ Authorization: `Bearer ${key}`,
 }
 
       export async function createNote(newNote:NoteValues):Promise<Note>{
-        const results = await axios.post<Note>('https://notehub-public.goit.study/api/notes', newNote, {
+        const results = await axios.post<Note>(`${url}/notes`, newNote, {
       headers: {
 Authorization: `Bearer ${key}`,
   }});
@@ -33,7 +34,7 @@ Authorization: `Bearer ${key}`,
       }
       
      export async function deleteNote(id:number){
-      await axios.delete(`https://notehub-public.goit.study/api/notes/${id}`, {
+      await axios.delete(`${url}/notes/${id}`, {
         headers: {
 Authorization: `Bearer ${key}`,
   },
